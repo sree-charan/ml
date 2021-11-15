@@ -1,0 +1,69 @@
+import csv
+data = list(csv.reader(open("data.csv")))
+res=[0]*(len(data[0])-1)
+for row in data:
+  if row[-1]=="Yes":
+    for i in range(len(row)-1):
+      if res[i]==0:
+        res[i]=row[i]
+      elif res[i]!=row[i]:
+        res[i]="?"
+print(*res, sep=" ")
+
+
+
+
+import csv
+data = list(csv.reader(open("data.csv")))
+s = [0]*(len(data[0])-1)
+g = [['?' for i in range(len(s))] for j in range(len(s))]
+for row in data:
+  if(row[-1] == "Yes"):
+    for i in range(len(row)-1):
+      if(s[i] == 0):
+        s[i] = row[i]
+      elif(s[i] != row[i]):
+        s[i] = "?"
+        g[i][i] = "?"
+  else:
+    for i in range(len(s)):
+      if(row[i] != s[i]):
+        g[i][i] = s[i]
+      else:
+        g[i][i] = "?" 
+gh = []
+for i in g:
+  if(len(set(i))!= 1):
+    gh.append(i)
+print("Specific Hypothesis")
+print(*s,sep=" ")
+print("\nGeneral Hypothesis")
+print(*gh,sep = " ")
+
+
+
+
+import pandas
+from sklearn import tree
+import pydotplus
+from sklearn.tree import DecisionTreeClassifier as dtc
+import matplotlib.pyplot as plt
+import matplotlib.image as pltimg
+
+df = pandas.read_csv("playtennis.csv")
+df['Outlook'] = df['Outlook'].map({'Sunny': 0, 'Overcast': 1, 'Rain': 2})
+df['Temperature'] = df['Temperature'].map({'Hot': 0, 'Mild': 1,'Cool': 2})
+df['Humidity'] = df['Humidity'].map({'High': 0, 'Normal': 1})
+df['Wind'] = df['Wind'].map({'Weak': 0, 'Strong': 1})
+df['PlayTennis'] = df['PlayTennis'].map({'No': 0, 'Yes': 1})
+features = ['Outlook', 'Temperature', 'Humidity', 'Wind']
+X = df[features]
+y = df['PlayTennis']
+dtree = dtc(criterion="entropy")
+dtree = dtree.fit(X, y)
+data = tree.export_graphviz(dtree, out_file=None, feature_names=features)
+graph = pydotplus.graph_from_dot_data(data)
+graph.write_png('mydecisiontree.png')
+img=pltimg.imread('mydecisiontree.png')
+imgplot = plt.imshow(img)
+plt.show()
